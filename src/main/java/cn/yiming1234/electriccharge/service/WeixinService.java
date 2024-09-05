@@ -64,7 +64,7 @@ public class WeixinService {
 //        try (HttpClient client = HttpClient.newHttpClient()) {
 //
 //            HttpRequest request = HttpRequest.newBuilder()
-//                    .uri(URI.create("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx8e38c2ac5c416d46&secret=732605f86504c580dd15677297115aa9&code=" + code + "&grant_type=authorization_code"))
+//                    .uri(URI.create("https://example.com"))
 //                    .GET()
 //                    .build();
 //
