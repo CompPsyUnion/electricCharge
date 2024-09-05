@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+
+yiming1234:
+  wechat:
+    appid: ${yiming1234.wechat.appid}
+    secret: ${yiming1234.wechat.secret}
+
+  electric:
+    cookie:
+      domain: ${yiming1234.electric.cookie}
