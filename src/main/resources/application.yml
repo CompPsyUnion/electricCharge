@@ -1,12 +1,16 @@
+server:
+  port: 8080
+
 spring:
   profiles:
     active: dev
 
 yiming1234:
+  server:
+    host: ${yiming1234.server.host}
   wechat:
     appid: ${yiming1234.wechat.appid}
     secret: ${yiming1234.wechat.secret}
 
   electric:
-    cookie:
-      domain: ${yiming1234.electric.cookie}
+    cookie: ${yiming1234.electric.cookie}

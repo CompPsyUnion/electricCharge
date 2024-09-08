@@ -2,9 +2,11 @@ package cn.yiming1234.electriccharge.service;
 
 import cn.yiming1234.electriccharge.controller.ElectricController;
 import cn.yiming1234.electriccharge.pojo.Balance;
+import cn.yiming1234.electriccharge.properties.ElectricProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,19 +21,23 @@ import cn.yiming1234.electriccharge.properties.WeChatProperties;
 @Slf4j
 public class WeixinService {
 
+    private final ElectricProperties electricProperties;
     private final WeChatProperties weChatProperties;
     private final ElectricController electricController;
     private final ObjectMapper jacksonObjectMapper;
 
-    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper) {
+    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties) {
         this.weChatProperties = weChatProperties;
         this.electricController = electricController;
         this.jacksonObjectMapper = jacksonObjectMapper;
+        this.electricProperties = electricProperties;
     }
+
+    @Autowired
+    private H5LoginService h5LoginService;
 
     /**
      * 获取微信公众号的access_token
-     * @return
      */
     public String getAccessToken() {
         try (HttpClient client = HttpClient.newHttpClient()) {
@@ -56,30 +62,14 @@ public class WeixinService {
     }
 
     /**
-     * 获取微信公众号的openId
-     * @return
+     * 测试公众号显示的用户openId
      */
-    // TODO
     public String getOpenId() {
-//        try (HttpClient client = HttpClient.newHttpClient()) {
-//
-//            HttpRequest request = HttpRequest.newBuilder()
-//                    .uri(URI.create("https://example.com"))
-//                    .GET()
-//                    .build();
-//
-//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//            return response.body();
-//        } catch (IOException | InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
         return "oxk7M6DHey3QKzhiWYcdqYzcqLqA";
     }
 
     /**
      * 设置余额
-     *
-     * @return
      */
     public double setBalance(){
         try {
@@ -94,20 +84,20 @@ public class WeixinService {
     }
     /**
      * 发送余额通知
-     * @param accessToken
-     * @param openId
-     * @param balance
-     * @return
      */
     public String sendBalance(String accessToken, String openId, Double balance) {
         try (HttpClient client = HttpClient.newHttpClient()) {
 
+            String roomCode = electricProperties.getRoomCode();
             String jsonPayload = new StringBuilder()
                     .append("{")
                     .append("\"touser\":\"").append(openId).append("\",")
-                    .append("\"template_id\":\"").append("NKVWY4dM6VxQdfB2DbnyZV3QXJwn0kHKPkp4I9sDv1g").append("\",")
+                    .append("\"template_id\":\"").append("8M1mgGgJt5uX2I7BLhbJC4tDKmqtDvWMj-DT2_PMUDo").append("\",")
                     .append("\"data\":{")
-                    .append("\"balance\":{")
+                    .append("\"thing18\":{")
+                    .append("\"value\":\"").append(roomCode).append("\"")
+                    .append("},")
+                    .append("\"character_string6\":{")
                     .append("\"value\":\"").append(balance).append("\"")
                     .append("}")
                     .append("}")
