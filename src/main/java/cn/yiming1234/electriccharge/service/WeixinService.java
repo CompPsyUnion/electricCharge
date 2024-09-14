@@ -33,9 +33,6 @@ public class WeixinService {
         this.electricProperties = electricProperties;
     }
 
-    @Autowired
-    private H5LoginService h5LoginService;
-
     /**
      * 获取微信公众号的access_token
      */
@@ -59,13 +56,6 @@ public class WeixinService {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * 测试公众号显示的用户openId
-     */
-    public String getOpenId() {
-        return "oxk7M6DHey3QKzhiWYcdqYzcqLqA";
     }
 
     /**
