@@ -10,8 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import cn.yiming1234.electriccharge.properties.MailProperties;
-
 import java.io.File;
 
 @Service
@@ -20,9 +18,6 @@ public class MailUtil {
 
     @Autowired
     private JavaMailSender mailSender;
-
-    @Autowired
-    private MailProperties mailProperties;
 
     /**
      * 发送文本邮件

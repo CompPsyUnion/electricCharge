@@ -2,6 +2,9 @@ yiming1234:
   server:
     host: https://nottinghamwall.shenzhuo.vip
 
+  wechat:
+    id: W3196812536
+
   electric:
     building-code: 009
     floor-code: 009002
