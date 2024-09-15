@@ -32,12 +32,14 @@ public class WeixinService {
     private final WeChatProperties weChatProperties;
     private final ObjectMapper jacksonObjectMapper;
     private final ElectricService electricService;
+    private final MoneyService moneyService;
 
-    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, H5LoginService h5LoginService, ElectricService electricService) {
+    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
         this.weChatProperties = weChatProperties;
         this.jacksonObjectMapper = jacksonObjectMapper;
         this.electricProperties = electricProperties;
         this.electricService = electricService;
+        this.moneyService = moneyService;
     }
 
     /**
@@ -186,19 +188,35 @@ public class WeixinService {
         response.setContentType("application/xml; charset=UTF-8");
         if (baseMessage instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) baseMessage;
-            String content = getContent(MessageUtil.xmlToMap(MessageUtil.textMessageToXml(textMessage)));
-            textMessage.setContent("当前寝室电费余额：" + getCharge(content) + "元");
-            textMessage.setCreateTime(System.currentTimeMillis());
-            textMessage.setFromUserName(baseMessage.getFromUserName());
-            textMessage.setToUserName(baseMessage.getToUserName());
-            String xml = MessageUtil.textMessageToXml(textMessage);
-            log.info("回复消息内容：" + xml);
             try {
+                String content = getContent(MessageUtil.xmlToMap(MessageUtil.textMessageToXml(textMessage)));
+                double balance = getCharge(content);
+
+                String codeParams = electricService.getCode(content);
+                String[] params = codeParams.split("&");
+
+                String buildingCode = params[0].split("=")[1];
+                String floorCode = params[1].split("=")[1];
+                String roomCode = params[2].split("=")[1];
+
+                String recharge10 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "10");
+                String recharge20 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "20");
+                String recharge30 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "30");
+
+                textMessage.setContent(String.format(
+                        "当前寝室电费余额：%.2f元，\n充值10元：%s\n充值20元：%s\n充值30元：%s",
+                        balance, recharge10, recharge20, recharge30
+                ));
+                textMessage.setCreateTime(System.currentTimeMillis());
+                textMessage.setFromUserName(baseMessage.getFromUserName());
+                textMessage.setToUserName(baseMessage.getToUserName());
+                String xml = MessageUtil.textMessageToXml(textMessage);
+                log.info("回复消息内容：" + xml);
                 response.getWriter().write(xml);
                 response.getWriter().flush(); // 确保消息被发送
                 log.info("消息已发送到微信服务器");
             } catch (Exception e) {
-                log.error("发送消息失败", e);
+                log.error("处理消息失败", e);
             }
         } else {
             log.info("暂不支持此消息类型！");
