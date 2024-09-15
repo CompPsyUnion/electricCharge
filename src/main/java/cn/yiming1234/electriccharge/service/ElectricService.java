@@ -16,7 +16,7 @@ public class ElectricService {
     private ElectricProperties electricProperties;
 
     /**
-     * 第三方接口获取电费余额
+     * 第三方接口获取电费余额(自用)
      */
     public String getElectricCharge() throws Exception {
         try (HttpClient client = HttpClient.newHttpClient()) {

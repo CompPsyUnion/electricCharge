@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev, common
 
 yiming1234:
   server:
@@ -14,3 +14,9 @@ yiming1234:
 
   electric:
     cookie: ${yiming1234.electric.cookie}
+
+  mail:
+    host: ${yiming1234.mail.host}
+    port: ${yiming1234.mail.port}
+    from: ${yiming1234.mail.from}
+    subject: ${yiming1234.mail.subject}

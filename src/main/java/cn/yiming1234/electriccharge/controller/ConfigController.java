@@ -36,7 +36,7 @@ public class ConfigController {
     }
 
     /**
-     * 微信公众号服务器基本服务器配置
+     * 微信公众号服务器推送服务器配置
      */
     @GetMapping("/signature")
     public String signature(HttpServletRequest req, HttpServletResponse resp) {
@@ -49,11 +49,15 @@ public class ConfigController {
         boolean result = check(timestamp, nonce, signature);
         if (result) {
             // 3.校验成功返回echostr
+            log.info("校验成功，返回echostr");
             return echostr;
         }
         return "error!";
     }
 
+    /**
+     * 校验微信服务器传入的参数
+     */
     public static boolean check(String timestamp, String nonce, String signature) {
         // 1.按字典序对TOKEN, timestamp和nonce排序
         String[] arr = new String[]{TOKEN,timestamp,nonce};
@@ -66,5 +70,4 @@ public class ConfigController {
         System.out.println(signature);
         return str.equalsIgnoreCase(signature);
     }
-
 }

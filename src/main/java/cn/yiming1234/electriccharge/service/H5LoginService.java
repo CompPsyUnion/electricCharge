@@ -2,8 +2,10 @@ package cn.yiming1234.electriccharge.service;
 
 import cn.yiming1234.electriccharge.properties.H5LoginProperties;
 import cn.yiming1234.electriccharge.properties.WeChatProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,8 +65,12 @@ public class H5LoginService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
-            JSONObject jsonObject = new JSONObject(responseBody);
-            return jsonObject.getString("openid");
+            // 解析JSON响应，提取openid字段
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(responseBody);
+            String openId = jsonNode.get("openid").asText();
+            log.info("openid: " + openId);
+            return openId;
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException("Failed to get openid", e);
         }

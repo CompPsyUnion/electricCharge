@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "yiming1234.wechat")
 @Data
 public class WeChatProperties {
+    private String id;
     private String appid;
     private String appsecret;
 }

@@ -1,0 +1,22 @@
+yiming1234:
+  server:
+    host: https://nottinghamwall.shenzhuo.vip
+
+  wechat:
+    id: W3196812536
+
+  electric:
+    building-code: 009
+    floor-code: 009002
+    room-code: 19-421
+
+  mail:
+    host: smtp.qq.com
+    port: 465
+    from: pleasurecruise@qq.com
+    subject:  寝室电费欠费提醒
+
+  buildingCode:
+    15: 007
+    19: 009
+    23: 013
