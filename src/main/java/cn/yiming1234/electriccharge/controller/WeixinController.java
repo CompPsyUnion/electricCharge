@@ -62,12 +62,15 @@ public class WeixinController {
     public void message(HttpServletRequest request, HttpServletResponse response) {
         try {
             log.info("接收到微信公众号消息");
+            // 将微信请求xml转为map格式，获取所需的参数
             Map<String, String> paramMap = MessageUtil.parseXml(request);
             log.info(JSON.toJSONString(paramMap));
             String type = paramMap.get("MsgType");
             if (TypeUtil.REQ_MESSAGE_TYPE_TEXT.equals(type)) {
                 log.info("-----------------进入消息处理-----------------");
+                // 处理文本消息
                 BaseMessage baseMessage = weixinService.processMessage(paramMap);
+                // 回复消息
                 weixinService.autoReply(baseMessage, response);
             } else {
                 log.info("不是文本消息");
