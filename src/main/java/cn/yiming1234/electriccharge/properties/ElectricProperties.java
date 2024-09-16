@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class ElectricProperties {
 
+    private String areaId;
     private String buildingCode;
     private String floorCode;
     private String roomCode;

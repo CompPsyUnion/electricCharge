@@ -58,4 +58,22 @@ public class MessageUtil {
 
         return document.asXML();
     }
+
+    /**
+     * 将xml字符串转换为文本对象
+     */
+    public static Map<String, String> xmlToMap(String s) {
+        Map<String, String> map = new HashMap<>();
+        try {
+            Document document = DocumentHelper.parseText(s);
+            Element root = document.getRootElement();
+            List<Element> elementList = root.elements();
+            for (Element e : elementList) {
+                map.put(e.getName(), e.getText());
+            }
+        } catch (Exception e) {
+            log.error("xml转换失败", e);
+        }
+        return map;
+    }
 }

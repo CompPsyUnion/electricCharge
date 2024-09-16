@@ -30,14 +30,16 @@ public class WeixinService {
 
     private final ElectricProperties electricProperties;
     private final WeChatProperties weChatProperties;
-    private final ElectricController electricController;
     private final ObjectMapper jacksonObjectMapper;
+    private final ElectricService electricService;
+    private final MoneyService moneyService;
 
-    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, H5LoginService h5LoginService) {
+    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
         this.weChatProperties = weChatProperties;
-        this.electricController = electricController;
         this.jacksonObjectMapper = jacksonObjectMapper;
         this.electricProperties = electricProperties;
+        this.electricService = electricService;
+        this.moneyService = moneyService;
     }
 
     /**
@@ -68,7 +70,7 @@ public class WeixinService {
      */
     public double setBalance(){
         try {
-            Balance balance = jacksonObjectMapper.readValue(electricController.getElectricCharge(), Balance.class);
+            Balance balance = jacksonObjectMapper.readValue(electricService.getElectricCharge(), Balance.class);
             double amount = balance.getData().getAmount();
             log.info("balance:{}", amount);
             return amount;
@@ -127,12 +129,55 @@ public class WeixinService {
             log.info("这是文本消息！");
             baseMessage = MsgHelpClass.setAttribute(new MessageProperties(fromUserName, toUserName, createTime, msgType, msgId), TextMessage.class);
             TextMessage textMessage = (TextMessage) baseMessage;
-            textMessage.setContent("您发送的消息是：" + map.get("Content"));
+            textMessage.setContent(map.get("Content"));
         } else {
             log.info("暂不支持此消息类型！");
         }
         return baseMessage;
     }
+
+    /**
+     * 获取消息内容
+     */
+    public String getContent(Map<String, String> map){
+        try{
+            log.info("消息内容：" + map.get("Content"));
+            return map.get("Content");
+        } catch (Exception e) {
+            log.error("获取消息内容失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取电费余额(自用)
+     */
+    public double getBalance() {
+        try {
+            Balance balance = jacksonObjectMapper.readValue(electricService.getElectricCharge(), Balance.class);
+            return balance.getData().getAmount();
+        } catch (Exception e) {
+            log.error("获取电费余额失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 获取电费余额
+     */
+    public double getCharge(String content) {
+        try {
+            String response = electricService.getCharge(content);
+            log.info("Server response: {}", response);
+            Balance balance = jacksonObjectMapper.readValue(electricService.getCharge(content), Balance.class);
+            return balance.getData().getAmount();
+        } catch (Exception e) {
+            log.error("获取电费余额失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    // TODO 添加公众号自定义菜单
 
     /**
      * 生成回复微信公众号的消息
@@ -143,20 +188,35 @@ public class WeixinService {
         response.setContentType("application/xml; charset=UTF-8");
         if (baseMessage instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) baseMessage;
-            // TODO 修改余额为由用户输入寝室号查询得到的余额
-            // TODO 添加公众号自定义菜单
-            textMessage.setContent("当前寝室电费余额：" + setBalance() + "元");
-            textMessage.setCreateTime(System.currentTimeMillis());
-            textMessage.setFromUserName(baseMessage.getFromUserName());
-            textMessage.setToUserName(baseMessage.getToUserName());
-            String xml = MessageUtil.textMessageToXml(textMessage);
-            log.info("回复消息内容：" + xml);
             try {
+                String content = getContent(MessageUtil.xmlToMap(MessageUtil.textMessageToXml(textMessage)));
+                double balance = getCharge(content);
+
+                String codeParams = electricService.getCode(content);
+                String[] params = codeParams.split("&");
+
+                String buildingCode = params[0].split("=")[1];
+                String floorCode = params[1].split("=")[1];
+                String roomCode = params[2].split("=")[1];
+
+                String recharge10 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "10");
+                String recharge20 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "20");
+                String recharge30 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "30");
+
+                textMessage.setContent(String.format(
+                        "当前寝室电费余额：%.2f元，\n充值10元：%s\n充值20元：%s\n充值30元：%s",
+                        balance, recharge10, recharge20, recharge30
+                ));
+                textMessage.setCreateTime(System.currentTimeMillis());
+                textMessage.setFromUserName(baseMessage.getFromUserName());
+                textMessage.setToUserName(baseMessage.getToUserName());
+                String xml = MessageUtil.textMessageToXml(textMessage);
+                log.info("回复消息内容：" + xml);
                 response.getWriter().write(xml);
                 response.getWriter().flush(); // 确保消息被发送
                 log.info("消息已发送到微信服务器");
             } catch (Exception e) {
-                log.error("发送消息失败", e);
+                log.error("处理消息失败", e);
             }
         } else {
             log.info("暂不支持此消息类型！");
