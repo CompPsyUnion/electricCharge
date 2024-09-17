@@ -1,8 +1,10 @@
 package cn.yiming1234.electriccharge.service;
 
+import cn.hutool.http.HttpUtil;
 import cn.yiming1234.electriccharge.controller.ElectricController;
 import cn.yiming1234.electriccharge.pojo.Balance;
 import cn.yiming1234.electriccharge.properties.ElectricProperties;
+import cn.yiming1234.electriccharge.properties.H5LoginProperties;
 import cn.yiming1234.electriccharge.properties.MessageProperties;
 import cn.yiming1234.electriccharge.properties.message.BaseMessage;
 import cn.yiming1234.electriccharge.properties.message.TextMessage;
@@ -20,6 +22,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 import cn.yiming1234.electriccharge.properties.WeChatProperties;
@@ -30,12 +33,14 @@ public class WeixinService {
 
     private final ElectricProperties electricProperties;
     private final WeChatProperties weChatProperties;
+    private final H5LoginProperties h5LoginProperties;
     private final ObjectMapper jacksonObjectMapper;
     private final ElectricService electricService;
     private final MoneyService moneyService;
 
-    public WeixinService(WeChatProperties weChatProperties, ElectricController electricController, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
+    public WeixinService(WeChatProperties weChatProperties, H5LoginProperties h5LoginProperties, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
         this.weChatProperties = weChatProperties;
+        this.h5LoginProperties = h5LoginProperties;
         this.jacksonObjectMapper = jacksonObjectMapper;
         this.electricProperties = electricProperties;
         this.electricService = electricService;
@@ -64,6 +69,63 @@ public class WeixinService {
             throw new RuntimeException(e);
         }
     }
+
+//    /**
+//     * 添加自定义菜单
+//     */
+//    public String createMenu(String accessToken) {
+//        try (HttpClient client = HttpClient.newHttpClient()) {
+//            String jsonPayload = """
+//        {
+//            "button":[
+//            {
+//                "name":"我的博客",
+//                "sub_button":[
+//                {
+//                    "type":"view",
+//                    "name":"网页版博客",
+//                    "url":"http://blog.yiming1234.cn"
+//                },
+//                {
+//                    "type":"view",
+//                    "name":"CSDN博客",
+//                    "url":"https://yiming1234.blog.csdn.net"
+//                },
+//                {
+//                    "type":"view",
+//                    "name":"Github主页",
+//                    "url":"https://github.com/Pleasurecruise"
+//                }]
+//            },
+//            {
+//                "name":"公众号功能",
+//                "sub_button":[
+//                {
+//                    "type":"view",
+//                    "name":"查询寝室电费",
+//                    "url":"http://www.soso.com/"
+//                },
+//                {
+//                    "type":"article_id",
+//                    "name":"编程资源汇总",
+//                    "article_id":"mid=2247483659"
+//                }]
+//            }]
+//        }
+//        """;
+//
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(URI.create("https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + accessToken))
+//                    .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+//                    .setHeader("content-type", "application/json")
+//                    .build();
+//
+//            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//            return response.body();
+//        } catch (IOException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     /**
      * 设置余额
@@ -177,8 +239,6 @@ public class WeixinService {
         }
     }
 
-    // TODO 添加公众号自定义菜单
-
     /**
      * 生成回复微信公众号的消息
      */
@@ -203,9 +263,11 @@ public class WeixinService {
                 String recharge20 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "20");
                 String recharge30 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "30");
 
+                String url = h5LoginProperties.getHost();
+
                 textMessage.setContent(String.format(
-                        "当前寝室电费余额：%.2f元，\n充值10元：%s\n充值20元：%s\n充值30元：%s",
-                        balance, recharge10, recharge20, recharge30
+                        "当前寝室电费余额：%.2f元，\n充值10元：%s\n充值20元：%s\n充值30元：%s\n点击此链接开启短信提醒服务：%s",
+                        balance, recharge10, recharge20, recharge30, url
                 ));
                 textMessage.setCreateTime(System.currentTimeMillis());
                 textMessage.setFromUserName(baseMessage.getFromUserName());

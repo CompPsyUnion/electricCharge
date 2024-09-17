@@ -1,3 +1,14 @@
+spring:
+  datasource:
+    host: localhost
+    port: 3306
+    database: electriccharge
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 yiming1234:
   server:
     host: https://nottinghamwall.shenzhuo.vip
@@ -6,7 +17,7 @@ yiming1234:
     id: W3196812536
 
   electric:
-    area-id:  2307499265384382465
+    area-id: 2307499265384382465
     building-code: 009
     floor-code: 009002
     room-code: 19-421
@@ -15,4 +26,4 @@ yiming1234:
     host: smtp.qq.com
     port: 465
     from: pleasurecruise@qq.com
-    subject:  寝室电费欠费提醒
+    subject: 寝室电费欠费提醒

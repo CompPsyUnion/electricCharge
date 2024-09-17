@@ -21,9 +21,17 @@ public class ConfigController {
     public static final String TOKEN = "token";
 
     /**
+     * 首页
+     */
+    @GetMapping("/")
+    public void index(HttpServletResponse response) throws IOException {
+        response.sendRedirect("/index.html");
+    }
+
+    /**
      * 微信公众号服务器重定向授权域名验证
      */
-    @GetMapping("/MP_verify_bgXfuICvzc098DQ6.txt")
+    @GetMapping("/link/MP_verify_bgXfuICvzc098DQ6.txt")
     public String showTxtFile() {
         try {
             ClassPathResource resource = new ClassPathResource("MP_verify_bgXfuICvzc098DQ6.txt");

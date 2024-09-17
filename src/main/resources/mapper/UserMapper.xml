@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yiming1234.electriccharge.mapper.UserMapper">
+
+    <insert id="insert" parameterType="cn.yiming1234.electriccharge.entity.User">
+        insert into user (phone, room,charge,create_time,update_time)
+        values (#{phone}, #{room},#{charge} #{createTime},#{updateTime})
+    </insert>
+
+    <select id="getByPhone" resultType="cn.yiming1234.electriccharge.entity.User">
+        select * from user
+        <where>
+            <if test="phone != null and phone != ''">
+                and phone like concat('%',#{phone},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getByRoom" resultType="cn.yiming1234.electriccharge.entity.User">
+        select room from user where phone = #{phone}
+        <where>
+            <if test="phone != null and phone != ''">
+                and phone like concat('%',#{phone},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getCreateTime" resultType="cn.yiming1234.electriccharge.entity.User">
+        select create_time from user where phone = #{phone}
+        <where>
+            <if test="phone != null and phone != ''">
+                and phone like concat('%',#{phone},'%')
+            </if>
+        </where>
+    </select>
+
+    <update id="updateChargeByRoom" parameterType="cn.yiming1234.electriccharge.entity.User">
+        update user
+        <set>
+            <if test="charge != null">charge = #{charge},</if>
+        </set>
+        where room = #{room}
+    </update>
+
+    <update id="updateChargeByPhone" parameterType="cn.yiming1234.electriccharge.entity.User">
+        update user
+        <set>
+            <if test="charge != null">charge = #{charge},</if>
+        </set>
+        where phone = #{phone}
+    </update>
+
+    <update id="updateCreateTime" parameterType="cn.yiming1234.electriccharge.entity.User">
+        update user
+        <set>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

@@ -1,15 +1,16 @@
 package cn.yiming1234.electriccharge.service;
 
+import cn.yiming1234.electriccharge.mapper.UserMapper;
 import cn.yiming1234.electriccharge.properties.ElectricProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,27 @@ public class ElectricService {
 
     @Autowired
     private ElectricProperties electricProperties;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    /**
+     * 通过手机号储存电费
+     */
+    public String saveChargeByPhone(String phone, String balance) {
+        log.info("phone:{}, balance:{}", phone, balance);
+        userMapper.updateChargeByPhone(phone, balance);
+        return "success";
+    }
+
+    /**
+     * 通过房间号储存电费
+     */
+    public String saveChargeByRoom(String room, String balance) {
+        log.info("room:{}, balance:{}", room, balance);
+        userMapper.updateChargeByRoom(room, balance);
+        return "success";
+    }
 
     /**
      * 第三方接口获取电费余额(自用)
@@ -57,6 +79,10 @@ public class ElectricService {
      * 根据消息内容输出对应的楼号，层号，房号
      */
     public String getCode(String content) {
+
+        if (content == null || content.isEmpty()) {
+            throw new IllegalArgumentException("房间号错误: " + content);
+        }
 
         // 楼栋号映射表
         Map<String, String> buildingCodeMap = new HashMap<>();

@@ -5,12 +5,34 @@ spring:
   profiles:
     active: dev, common
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${spring.datasource.host}:${spring.datasource.port}/${spring.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+  mybatis:
+    mapper-locations: classpath:mapper/*.xml
+    type-aliases-package: cn.yiming1234.electriccharge.entity
+    configuration:
+      map-underscore-to-camel-case: true
+
+  data:
+    redis:
+      host: ${spring.data.redis.host}
+      port: ${spring.data.redis.port}
+
 yiming1234:
   server:
     host: ${yiming1234.server.host}
+
   wechat:
     appid: ${yiming1234.wechat.appid}
     secret: ${yiming1234.wechat.secret}
+
+  aliyun:
+    accessKeyId: ${yiming1234.aliyun.accessKeyId}
+    accessKeySecret: ${yiming1234.aliyun.accessKeySecret}
 
   electric:
     cookie: ${yiming1234.electric.cookie}
@@ -20,3 +42,7 @@ yiming1234:
     port: ${yiming1234.mail.port}
     from: ${yiming1234.mail.from}
     subject: ${yiming1234.mail.subject}
+
+  pay:
+    appid: ${yiming1234.pay.appid}
+    appsecret: ${yiming1234.pay.appsecret}
