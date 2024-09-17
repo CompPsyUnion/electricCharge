@@ -31,14 +31,6 @@ public class H5LoginController {
     @Autowired
     private H5LoginProperties h5LoginProperties;
 
-    //当进入这个页面之前，也就是访问“/”接口的时候
-    //需要获取网页授权得到code,回调地址？
-    //然后通过code，换取openid，并储存到数据库中
-    //进入页面之后，用户选择寝室号点击提交
-    //前端通过roomCode接口传输寝室号，结构为{"value":["19","4","21"]}
-    // 将寝室号传到后台和openid对应存入数据库
-    //然后通过寝室号，查询openid,调用sentBalance接口发送通知
-
     /**
      * 重定向到微信授权页面
      */
@@ -54,7 +46,7 @@ public class H5LoginController {
     /**
      * 微信授权回调,同时发送模板消息
      */
-    @GetMapping("/")
+    @GetMapping("/link")
     public void callback(@RequestParam("code") String code, HttpServletResponse response) throws IOException {
         String accessToken = weixinService.getAccessToken();
         String openId = h5LoginService.getOpenId(code);

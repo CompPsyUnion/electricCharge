@@ -49,6 +49,4 @@ public class MailController {
         return "success";
     }
 
-    // TODO 未设置用户获取与存储方式
-
 }

@@ -77,7 +77,14 @@ public class H5LoginService {
     }
 
     /**
-     * 储存用户的openid
+     * 获取用户的手机号
+     */
+    public String getPhone(){
+        return null;
+    }
+
+    /**
+     * 储存用户的信息
      */
     public void saveOpenId(String openId) {
         // TODO
