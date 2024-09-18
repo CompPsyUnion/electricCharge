@@ -52,7 +52,7 @@ public class PayController {
     public String callback(HttpServletRequest request) throws Exception {
 
         Map<String, String[]> parameterMap = request.getParameterMap();
-        log.info("展示回调的所有结果：");
+        log.info("展示回调的所有结果");
 
         parameterMap.keySet().stream().forEach((k) ->{
             log.info(k+":"+parameterMap.get(k)[0]);
@@ -74,6 +74,7 @@ public class PayController {
             User newUser = new User();
             newUser.setPhone(phone);
             newUser.setRoom(roomNumber);
+            newUser.setCharge(String.valueOf(balance));
             newUser.setCreateTime(LocalDateTime.now());
             userMapper.insert(newUser);
 

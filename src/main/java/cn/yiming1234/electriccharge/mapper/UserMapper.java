@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into user(phone,room,create_time) values(#{phone}, #{room}, #{createTime})")
+    @Insert("insert into user(phone,room,charge,create_time) values(#{phone}, #{room}, #{charge}, #{createTime})")
     void insert(User user);
 
     @Select("select * from user where phone = #{phone}")
