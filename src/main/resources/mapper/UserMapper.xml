@@ -4,8 +4,8 @@
 <mapper namespace="cn.yiming1234.electriccharge.mapper.UserMapper">
 
     <insert id="insert" parameterType="cn.yiming1234.electriccharge.entity.User">
-        insert into user (phone, room,charge,create_time,update_time)
-        values (#{phone}, #{room},#{charge} #{createTime},#{updateTime})
+        insert into user (phone, room,charge,create_time)
+        values (#{phone}, #{room},#{charge} #{createTime}
     </insert>
 
     <select id="getByPhone" resultType="cn.yiming1234.electriccharge.entity.User">

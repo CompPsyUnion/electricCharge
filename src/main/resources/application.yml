@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev, common
+    active: dev, common, prod
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,6 +21,10 @@ spring:
     redis:
       host: ${spring.data.redis.host}
       port: ${spring.data.redis.port}
+
+  web:
+    resources:
+      static-locations: classpath:/static/
 
 yiming1234:
   server:

@@ -10,8 +10,6 @@ spring:
       port: 6379
 
 yiming1234:
-  server:
-    host: https://nottinghamwall.shenzhuo.vip
 
   wechat:
     id: W3196812536

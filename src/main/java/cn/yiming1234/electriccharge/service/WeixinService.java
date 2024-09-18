@@ -1,7 +1,5 @@
 package cn.yiming1234.electriccharge.service;
 
-import cn.hutool.http.HttpUtil;
-import cn.yiming1234.electriccharge.controller.ElectricController;
 import cn.yiming1234.electriccharge.pojo.Balance;
 import cn.yiming1234.electriccharge.properties.ElectricProperties;
 import cn.yiming1234.electriccharge.properties.H5LoginProperties;
@@ -22,7 +20,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.HashMap;
 import java.util.Map;
 
 import cn.yiming1234.electriccharge.properties.WeChatProperties;
@@ -33,14 +30,12 @@ public class WeixinService {
 
     private final ElectricProperties electricProperties;
     private final WeChatProperties weChatProperties;
-    private final H5LoginProperties h5LoginProperties;
     private final ObjectMapper jacksonObjectMapper;
     private final ElectricService electricService;
     private final MoneyService moneyService;
 
     public WeixinService(WeChatProperties weChatProperties, H5LoginProperties h5LoginProperties, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
         this.weChatProperties = weChatProperties;
-        this.h5LoginProperties = h5LoginProperties;
         this.jacksonObjectMapper = jacksonObjectMapper;
         this.electricProperties = electricProperties;
         this.electricService = electricService;
@@ -263,7 +258,7 @@ public class WeixinService {
                 String recharge20 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "20");
                 String recharge30 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "30");
 
-                String url = h5LoginProperties.getHost();
+                String url = "https://backend.yiming1234.cn";
 
                 textMessage.setContent(String.format(
                         "当前寝室电费余额：%.2f元，\n充值10元：%s\n充值20元：%s\n充值30元：%s\n点击此链接开启短信提醒服务：%s",

@@ -48,7 +48,7 @@ public class PayService {
         options.put("appid",payProperties.getAppid());
         options.put("appsecret",payProperties.getAppsecret());
         options.put("trade_order_id", UUID.randomUUID().toString().replace("-", ""));
-        options.put("total_fee","0.01");
+        options.put("total_fee","5.00");
         options.put("title","开通短信提醒服务");
         options.put("time", getSecondTimestamp(new Date()));
         options.put("notify_url", h5LoginProperties.getHost() + "/paycallback?phone=" + phone + "&roomNumber=" + roomNumber);
