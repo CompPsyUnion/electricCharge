@@ -19,6 +19,16 @@
     </select>
 
     <select id="getByRoom" resultType="cn.yiming1234.electriccharge.entity.User">
+        select * from user
+        <where>
+            <if test="room != null and room != ''">
+                and room like concat('%',#{room},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="getRoomByPhone" resultType="cn.yiming1234.electriccharge.entity.User">
         select room from user where phone = #{phone}
         <where>
             <if test="phone != null and phone != ''">

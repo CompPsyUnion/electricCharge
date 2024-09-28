@@ -18,7 +18,10 @@ public interface UserMapper {
     User getByPhone(String phone);
 
     @Select("select room from user where phone = #{phone}")
-    User getByRoom(String phone);
+    User getRoomByPhone(String phone);
+
+    @Select("select * from user where room = #{room}")
+    User getByRoom(String room);
 
     @Select("select create_time from user where phone = #{phone}")
     String getCreateTime(String phone);

@@ -1,5 +1,6 @@
 package cn.yiming1234.electriccharge.service;
 
+import cn.yiming1234.electriccharge.mapper.UserMapper;
 import cn.yiming1234.electriccharge.pojo.Balance;
 import cn.yiming1234.electriccharge.properties.ElectricProperties;
 import cn.yiming1234.electriccharge.properties.H5LoginProperties;
@@ -33,13 +34,15 @@ public class WeixinService {
     private final ObjectMapper jacksonObjectMapper;
     private final ElectricService electricService;
     private final MoneyService moneyService;
+    private final UserMapper userMapper;
 
-    public WeixinService(WeChatProperties weChatProperties, H5LoginProperties h5LoginProperties, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService) {
+    public WeixinService(WeChatProperties weChatProperties, H5LoginProperties h5LoginProperties, ObjectMapper jacksonObjectMapper, ElectricProperties electricProperties, MoneyService moneyService, ElectricService electricService, UserMapper userMapper) {
         this.weChatProperties = weChatProperties;
         this.jacksonObjectMapper = jacksonObjectMapper;
         this.electricProperties = electricProperties;
         this.electricService = electricService;
         this.moneyService = moneyService;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -253,6 +256,13 @@ public class WeixinService {
                 String buildingCode = params[0].split("=")[1];
                 String floorCode = params[1].split("=")[1];
                 String roomCode = params[2].split("=")[1];
+
+                if ( userMapper.getByRoom(roomCode)!= null) {
+                    electricService.saveChargeByRoom(roomCode, String.valueOf(balance));
+                    log.info("房间号存在，余额: {}", balance);
+                } else {
+                    log.info("房间号不存在，跳过储存");
+                }
 
                 String recharge10 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "10");
                 String recharge20 = moneyService.getPaymentLink(buildingCode, floorCode, roomCode, "20");

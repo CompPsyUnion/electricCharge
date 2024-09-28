@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,19 +26,17 @@ public class ElectricService {
     /**
      * 通过手机号储存电费
      */
-    public String saveChargeByPhone(String phone, String balance) {
+    public void saveChargeByPhone(String phone, String balance) {
         log.info("phone:{}, balance:{}", phone, balance);
         userMapper.updateChargeByPhone(phone, balance);
-        return "success";
     }
 
     /**
      * 通过房间号储存电费
      */
-    public String saveChargeByRoom(String room, String balance) {
+    public void saveChargeByRoom(String room, String balance) {
         log.info("room:{}, balance:{}", room, balance);
         userMapper.updateChargeByRoom(room, balance);
-        return "success";
     }
 
     /**
@@ -81,7 +78,7 @@ public class ElectricService {
     public String getCode(String content) {
 
         if (content == null || content.isEmpty()) {
-            throw new IllegalArgumentException("房间号错误: " + content);
+            throw new IllegalArgumentException("房间号错误或内容不完整: " + content);
         }
 
         // 楼栋号映射表
@@ -131,7 +128,7 @@ public class ElectricService {
      */
     public String getCharge(String content) throws Exception {
         try (HttpClient client = HttpClient.newHttpClient()) {
-
+            // 获取房间号对应的代码
             String codeParams = getCode(content);
 
             String requestBody = String.format(

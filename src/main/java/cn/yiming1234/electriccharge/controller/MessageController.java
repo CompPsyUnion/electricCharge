@@ -1,7 +1,9 @@
 package cn.yiming1234.electriccharge.controller;
 
+import cn.yiming1234.electriccharge.entity.User;
 import cn.yiming1234.electriccharge.service.ElectricService;
 import cn.yiming1234.electriccharge.service.MessageService;
+import cn.yiming1234.electriccharge.service.WeixinService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class MessageController {
 
     @Autowired
     private ElectricService electricService;
+
+    @Autowired
+    private WeixinService weixinService;
 
     /**
      * 获取用户手机号
@@ -78,23 +83,28 @@ public class MessageController {
                 long diffInMillies = Math.abs(new Date().getTime() - creationDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
                 long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
                 if (diffInDays <= 30) {
-                    String content = String.valueOf(messageService.getRoom(phone));
-                    double balance = 0;
-                    try {
-                        balance = Double.parseDouble(electricService.getCharge(content));
-                        electricService.saveChargeByPhone(phone,String.valueOf(balance));
-                        log.info("balance:{}", balance);
-                    } catch (IllegalArgumentException e) {
-                        log.error("房间号错误：{}", content);
-                        continue;
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    if (balance < 10) {
-                        log.info("余额不足需要续费");
-                        messageService.SendSms2(phone, String.valueOf(balance));
-                    }else{
-                        log.info("余额充足");
+                    User user = messageService.getRoom(phone);
+                    if (user != null) {
+                        // 从 `user` 中获取房间信息
+                        String room = user.getRoom();
+                        double balance = weixinService.getCharge(room);
+                        try {
+                            electricService.saveChargeByPhone(phone, String.valueOf(balance));
+                            log.info("balance:{}", balance);
+                        } catch (IllegalArgumentException e) {
+                            log.error("房间号错误: {}", room);
+                            continue;
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        if (balance < 10) {
+                            log.info("余额不足需要续费");
+                            messageService.SendSms2(phone, String.valueOf(balance));
+                        } else {
+                            log.info("余额充足");
+                        }
+                    } else {
+                        log.error("未找到用户信息，phone: {}", phone);
                     }
                 } else {
                     log.info("订阅已过期");
