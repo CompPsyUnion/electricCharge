@@ -61,7 +61,7 @@ public class MessageService {
      * 获取所在房间号
      */
     public User getRoom(String phone) {
-         return userMapper.getByRoom(phone);
+         return userMapper.getRoomByPhone(phone);
     }
 
     /**
@@ -70,7 +70,7 @@ public class MessageService {
     public String submitPhone(String phone) throws ExecutionException, InterruptedException {
         // 校验手机号是否存在于数据库
         User user = userMapper.getByPhone(phone);
-        String code = generateVerificationCode(phone); // 假设有生成验证码的方法
+        String code = generateVerificationCode(phone);
 
         if (user == null) {
             // 用户不存在，发送验证码
@@ -89,7 +89,7 @@ public class MessageService {
         }
 
         // 查询是否绑定寝室号
-        if (userMapper.getByRoom(phone) == null) {
+        if (userMapper.getRoomByPhone(phone) == null) {
             // 未绑定寝室，发送验证码
             log.info("未绑定寝室，发送验证码");
             SendSms1(phone, code);
@@ -130,8 +130,6 @@ public class MessageService {
 
     /**
      * 提交表单
-     *
-     * @return
      */
     public String submitForm(String phone, String verificationCode, String roomNumber) {
         //校验验证码

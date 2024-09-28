@@ -49,10 +49,9 @@ public class MailService {
     }
 
     /**
-     * 获取用户
+     * 获取用户(自用)
      */
     public List<String> getUsers() {
-        // TODO 从数据库中获取用户
         return Arrays.asList("scyyw24@nottingham.edu.cn");
     }
 }

@@ -39,8 +39,6 @@ public class PayService {
 
     /**
      * 发送支付请求
-     *
-     * @return
      */
     public String pay(String phone,String roomNumber) {
         Map<String,Object> options = new HashMap<>();

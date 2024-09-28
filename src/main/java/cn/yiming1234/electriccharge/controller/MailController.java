@@ -21,11 +21,10 @@ public class MailController {
     private WeixinService weixinService;
 
     /**
-     * 发送电费不足邮件
+     * 发送电费不足邮件（自用）
      */
     @PostMapping("/sendMail")
     public String sendMail() {
-        // TODO 未设置用户
         List<String> user = mailService.getUsers();
         double balance = weixinService.setBalance();
         mailService.sendMail(String.valueOf(user), balance);
@@ -38,7 +37,6 @@ public class MailController {
      */
     @Scheduled(fixedRate = 3600000) // 每隔1小时执行一次
     public String sendMailByUser() {
-
         for (String user : mailService.getUsers()) {
             double balance = weixinService.setBalance(); // 获取用户电费余额
             if (balance < 10) {
