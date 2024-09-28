@@ -30,7 +30,7 @@ public interface UserMapper {
     void updateCreateTime(User user);
 
     @Update("update user set charge = #{charge} where room = #{room}")
-    void updateChargeByRoom(String room, String balance);
+    void updateChargeByRoom(String room, String charge);
 
     @Update("update user set charge = #{charge} where phone = #{phone}")
     void updateChargeByPhone(String phone, String charge);
