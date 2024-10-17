@@ -1,10 +1,8 @@
 package cn.yiming1234.electriccharge.service;
 
-import cn.yiming1234.electriccharge.controller.PayController;
 import cn.yiming1234.electriccharge.entity.User;
 import cn.yiming1234.electriccharge.mapper.UserMapper;
 import cn.yiming1234.electriccharge.properties.SmsProperties;
-import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

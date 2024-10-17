@@ -35,7 +35,7 @@ public class MailController {
      * 每隔一个小时根据数据表中的用户查询一次电费
      * 当电费小于10时发送邮件通知
      */
-    @Scheduled(fixedRate = 3600000) // 每隔1小时执行一次
+    @Scheduled(fixedRate = 43200000) // 每隔12小时执行一次
     public String sendMailByUser() {
         for (String user : mailService.getUsers()) {
             double balance = weixinService.setBalance(); // 获取用户电费余额
