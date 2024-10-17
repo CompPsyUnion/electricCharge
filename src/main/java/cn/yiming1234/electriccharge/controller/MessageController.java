@@ -74,7 +74,7 @@ public class MessageController {
     /**
      * 开启定时任务
      */
-    @Scheduled(fixedRate = 3600000) // 每隔1小时执行一次
+    @Scheduled(fixedRate = 43200000) // 每隔12小时执行一次
     public void sendSms() {
         List<String> phones = messageService.getAllPhones();
         for (String phone : phones) {
