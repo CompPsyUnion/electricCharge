@@ -6,7 +6,7 @@
 
 ## 说明
 
-楼层映射![文件](https://github.com/CompPsyUnion/electricCharge/blob/main/src/main/java/cn/yiming1234/electriccharge/service/ElectricService.java)
+楼层映射[文件](https://github.com/CompPsyUnion/electricCharge/blob/main/src/main/java/cn/yiming1234/electriccharge/service/ElectricService.java)
 
 由于没有常规渠道获取Cookie，只能定期抓包更新到数据库中，周期未知
 
